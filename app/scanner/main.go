@@ -53,26 +53,26 @@ const (
 	// NIL      TokenType = "NIL"
 
 	// Genz keywords
-	CHAI_BAN_GAYI TokenType = "CHAI_BAN_GAYI" // entrypoint
-	CHAI_KHATAM   TokenType = "CHAI_KHATAM"   // end
-	DEKH          TokenType = "DEKH"          // declare
-	HAI           TokenType = "HAI"           // assignment
-	BOL           TokenType = "BOL"           // print
-	SUN           TokenType = "SUN"           // input
-	AGAR          TokenType = "AGAR"          // if
-	NAHI_TOH      TokenType = "NAHI_TOH"      // then
-	WARNA         TokenType = "WARNA"         // else
-	JAB_TAK       TokenType = "JAB_TAK"       // while
-	TAB_TAK       TokenType = "TAB_TAK"       // while-then
-	HAR           TokenType = "HAR"           // for x
-	ME            TokenType = "ME"            // in y
-	KAAM_BATA     TokenType = "KAAM_BATA"     // function
-	KAAM_KAR      TokenType = "KAAM_KAR"      // call function
-	YE_LE         TokenType = "YE_LE"         // return
-	HAA_BILKUL    TokenType = "HAA_BILKUL"    // true
-	BHUL_JAA      TokenType = "BHUL_JAA"      // false
-	REHNE_DE      TokenType = "REHNE_DE"      // BREAK
-	KHALI         TokenType = "KHALI"         // nil
+	CHAI_BAN_GYI TokenType = "CHAI_BAN_GYI" // entrypoint
+	CHAI_KHATAM  TokenType = "CHAI_KHATAM"  // end
+	DEKH         TokenType = "DEKH"         // declare
+	HAI          TokenType = "HAI"          // assignment
+	BOL          TokenType = "BOL"          // print
+	SUN          TokenType = "SUN"          // input
+	AGAR         TokenType = "AGAR"         // if
+	NAHI_TOH     TokenType = "NAHI_TOH"     // then
+	WARNA        TokenType = "WARNA"        // else
+	JAB_TAK      TokenType = "JAB_TAK"      // while
+	TAB_TAK      TokenType = "TAB_TAK"      // while-then
+	HAR          TokenType = "HAR"          // for x
+	ME           TokenType = "ME"           // in y
+	KAAM_BATA    TokenType = "KAAM_BATA"    // function
+	KAAM_KAR     TokenType = "KAAM_KAR"     // call function
+	YE_LE        TokenType = "YE_LE"        // return
+	HAA_BILKUL   TokenType = "HAA_BILKUL"   // true
+	BHUL_JAA     TokenType = "BHUL_JAA"     // false
+	REHNE_DE     TokenType = "REHNE_DE"     // BREAK
+	KHALI        TokenType = "KHALI"        // nil
 
 	// Scanned Types
 	STRING TokenType = "STRING"
@@ -109,26 +109,26 @@ func matchOperators(op string) TokenType {
 
 func matchKeywords(s string) TokenType {
 	keywords := map[string]TokenType{
-		"hai":           HAI,
-		"chai_ban_gayi": CHAI_BAN_GAYI,
-		"chai_khatam":   CHAI_KHATAM,
-		"dekh":          DEKH,
-		"bol":           BOL,
-		"sun":           SUN,
-		"agar":          AGAR,
-		"nahi_toh":      NAHI_TOH,
-		"warna":         WARNA,
-		"jab_tak":       JAB_TAK,
-		"tab_tak":       TAB_TAK,
-		"har":           HAR,
-		"me":            ME,
-		"kaam_bata":     KAAM_BATA,
-		"kaam_kar":      KAAM_KAR,
-		"bhul_ja":       BHUL_JAA,
-		"rehne_de":      REHNE_DE,
-		"khali":         KHALI,
-		"haa_bilkul":    HAA_BILKUL,
-		"ye_le":         YE_LE,
+		"hai":          HAI,
+		"chai_ban_gyi": CHAI_BAN_GYI,
+		"chai_khatam":  CHAI_KHATAM,
+		"dekh":         DEKH,
+		"bol":          BOL,
+		"sun":          SUN,
+		"agar":         AGAR,
+		"nahi_toh":     NAHI_TOH,
+		"warna":        WARNA,
+		"jab_tak":      JAB_TAK,
+		"tab_tak":      TAB_TAK,
+		"har":          HAR,
+		"me":           ME,
+		"kaam_bata":    KAAM_BATA,
+		"kaam_kar":     KAAM_KAR,
+		"bhul_ja":      BHUL_JAA,
+		"rehne_de":     REHNE_DE,
+		"khali":        KHALI,
+		"haa_bilkul":   HAA_BILKUL,
+		"ye_le":        YE_LE,
 	}
 
 	return keywords[s]
