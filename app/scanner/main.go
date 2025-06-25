@@ -1,8 +1,10 @@
 package scanner
 
 import (
+	"chai-lang/app/utils"
 	"fmt"
 	"os"
+	"strconv"
 	"unicode/utf8"
 )
 
@@ -194,10 +196,49 @@ func (s *Scanner) scanToken() {
 		}
 	case '"':
 		s.string()
+
 	default:
-		s.error(fmt.Sprintf("Unexpected character: %c", r))
-		s.setExitCode(65)
+		if utils.IsDigit(r) {
+			s.number()
+		} else if utils.IsAlpha(r) {
+			s.identifier()
+		} else {
+			s.error(fmt.Sprintf("Unexpected character: %c", r))
+			s.setExitCode(65)
+		}
+
 	}
+}
+func (s *Scanner) identifier() {
+	for utils.IsAlpha(s.peek()) {
+		s.advance()
+	}
+
+	text := string(s.source[s.start:s.current])
+	t := matchKeywords(text)
+	if t == "" {
+		t = IDENTIFIER
+	}
+
+	s.addToken(t, text, nil)
+}
+func (s *Scanner) number() {
+	for utils.IsDigit(s.peek()) {
+		s.advance()
+	}
+
+	if s.peek() == '.' && utils.IsDigit(s.peekNext()) {
+		s.advance()
+
+		for utils.IsDigit(s.peek()) {
+			s.advance()
+		}
+	}
+
+	value := string(s.source[s.start:s.current])
+	fvalue, _ := strconv.ParseFloat(value, 64)
+
+	s.addToken(NUMBER, value, fvalue)
 }
 
 func (s Scanner) error(message string) {
@@ -265,6 +306,12 @@ func (s Scanner) peek() rune {
 	}
 	return rune(s.source[s.current])
 }
+func (s Scanner) peekNext() rune {
+	if s.current+1 >= len(s.source) {
+		return 0
+	}
+	return rune(s.source[s.current+1])
+}
 
 func (s *Scanner) setExitCode(code int) {
 	s.exitCode = code
@@ -279,6 +326,5 @@ type Token struct {
 }
 
 func (t Token) String() string {
-	return fmt.Sprintf("%s %s %v", t.tokenType, t.lexeme, t.literal)
+	return fmt.Sprintf("%s %s %v ", t.tokenType, t.lexeme, t.literal)
 }
-
