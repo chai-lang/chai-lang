@@ -27,10 +27,14 @@ func main() {
 	}
 
 	scanner := scanner.NewScanner(rawContent)
-	err = scanner.Scan()
-	if err != nil {
-		fmt.Println("Error:", err)
-	} else {
-		fmt.Println("Scan completed successfully.")
+	_ = scanner.Scan()
+	for _, t := range scanner.GetTokens(){
+		fmt.Println(t)
 	}
+	// if err != nil {
+	// 	fmt.Println("Error:", err)
+	// } else {
+	// 	fmt.Println("Scan completed successfully.")
+	// }
+
 }
