@@ -223,6 +223,7 @@ func (s *Scanner) string() {
 		if s.peek() == '"' {
 			s.advance()
 			s.addToken(STRING, fmt.Sprintf("\"%s\"", str), str)
+			return
 		} else if s.peek() == '\n' {
 			s.error("Unterminated string.")
 			return
