@@ -200,17 +200,19 @@ func (s *Scanner) scanToken() {
 	default:
 		if utils.IsDigit(r) {
 			s.number()
-		} else if utils.IsAlpha(r) {
-			s.identifier()
-		} else {
-			s.error(fmt.Sprintf("Unexpected character: %c", r))
-			s.setExitCode(65)
+			return
 		}
+		if utils.IsAlpha(r) {
+			s.identifier()
+			return
+		}
+		s.error(fmt.Sprintf("Unexpected character: %c", r))
+		s.setExitCode(65)
 
 	}
 }
 func (s *Scanner) identifier() {
-	for utils.IsAlpha(s.peek()) {
+	for utils.IsAlpha(s.peek()) || utils.IsDigit(s.peek()) {
 		s.advance()
 	}
 
