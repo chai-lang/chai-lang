@@ -152,6 +152,10 @@ func (s *Scanner) Scan() error {
 	return nil
 }
 
+func (s Scanner) GetExitCode() int {
+	return s.exitCode
+}
+
 func (s *Scanner) isAtEnd() bool {
 	return s.current >= len(s.source)
 }
@@ -187,6 +191,7 @@ func (s *Scanner) scanToken() {
 		}
 	default:
 		s.error(s.line, fmt.Sprintf("Unexpected character: %c", r))
+		s.setExitCode(65)
 	}
 }
 
@@ -251,6 +256,6 @@ type Token struct {
 }
 
 func (t Token) String() string {
-	return fmt.Sprintf("%s at line %d", t.tokenType, t.line)
+	return fmt.Sprintf("%s %s %v", t.tokenType, t.lexeme, t.literal)
 }
 

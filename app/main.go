@@ -20,7 +20,7 @@ func main() {
 	}
 
 	filename := args[2]
-	rawContent, err := os.ReadFile(filename) // command, ./run.sh tokenize test.chai
+	rawContent, err := os.ReadFile(filename)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error reading file: %v\n", err)
 		os.Exit(1)
@@ -28,13 +28,10 @@ func main() {
 
 	scanner := scanner.NewScanner(rawContent)
 	_ = scanner.Scan()
-	for _, t := range scanner.GetTokens(){
+	for _, t := range scanner.GetTokens() {
 		fmt.Println(t)
 	}
-	// if err != nil {
-	// 	fmt.Println("Error:", err)
-	// } else {
-	// 	fmt.Println("Scan completed successfully.")
-	// }
 
+	exitCode := scanner.GetExitCode()
+	os.Exit(exitCode)
 }
