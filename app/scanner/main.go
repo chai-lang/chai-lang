@@ -71,6 +71,9 @@ const (
 	BHUL_JAA      TokenType = "BHUL_JAA"      // false
 	REHNE_DE      TokenType = "REHNE_DE"      // BREAK
 	KHALI         TokenType = "KHALI"         // nil
+
+	// Scanned Types
+	STRING TokenType = "STRING"
 )
 
 func singleCharacters(c rune) TokenType {
@@ -189,14 +192,16 @@ func (s *Scanner) scanToken() {
 		} else {
 			s.addToken(SLASH, "/", nil)
 		}
+	case '"':
+		s.string()
 	default:
-		s.error(s.line, fmt.Sprintf("Unexpected character: %c", r))
+		s.error(fmt.Sprintf("Unexpected character: %c", r))
 		s.setExitCode(65)
 	}
 }
 
-func (s Scanner) error(line int, message string) {
-	s.report(line, "", message)
+func (s Scanner) error(message string) {
+	s.report(s.line, "", message)
 }
 
 func (s Scanner) report(line int, where, message string) {
@@ -210,6 +215,23 @@ func (s *Scanner) operators(r rune) {
 	}
 
 	s.addToken(matchOperators(op), op, nil)
+}
+
+func (s *Scanner) string() {
+	str := ""
+	for !s.isAtEnd() {
+		if s.peek() == '"' {
+			s.advance()
+			s.addToken(STRING, fmt.Sprintf("\"%s\"", str), str)
+		} else if s.peek() == '\n' {
+			s.error("Unterminated string.")
+			return
+		} else {
+			char, _ := s.advance()
+			str += string(char)
+		}
+	}
+	s.error("Unterminated string.")
 }
 
 func (s *Scanner) match(r rune) bool {
