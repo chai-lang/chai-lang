@@ -1,4 +1,4 @@
-package scanner
+package chai
 
 import (
 	"chai-lang/app/utils"

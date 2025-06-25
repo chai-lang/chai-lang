@@ -26,7 +26,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	scanner := scanner.NewScanner(rawContent)
+	scanner := chai.NewScanner(rawContent)
 	_ = scanner.Scan()
 	for _, t := range scanner.GetTokens() {
 		fmt.Println(t)
