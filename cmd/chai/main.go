@@ -1,7 +1,7 @@
 package main
 
 import (
-	"chai-lang/app/scanner"
+	"chai-lang/internal/scanner"
 	"fmt"
 	"os"
 )
@@ -26,7 +26,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	scanner := chai.NewScanner(rawContent)
+	scanner := scanner.NewScanner(rawContent)
 	_ = scanner.Scan()
 	for _, t := range scanner.GetTokens() {
 		fmt.Println(t)

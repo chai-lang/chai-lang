@@ -1,3 +1,3 @@
 #!/bin/bash
 
-go run ./app "$@"
+go run ./cmd/chai/main.go "$@"
