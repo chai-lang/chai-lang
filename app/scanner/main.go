@@ -2,6 +2,7 @@ package scanner
 
 import (
 	"fmt"
+	"os"
 	"unicode/utf8"
 )
 
@@ -91,11 +92,11 @@ func singleCharacters(c rune) TokenType {
 
 func matchOperators(op string) TokenType {
 	operators := map[string]TokenType{
-		"==":  EQUAL_EQUAL,
-		"<=":  LESS_EQUAL,
-		">=":  GREATER_EQUAL,
-		">":   GREATER,
-		"<":   LESS,
+		"==": EQUAL_EQUAL,
+		"<=": LESS_EQUAL,
+		">=": GREATER_EQUAL,
+		">":  GREATER,
+		"<":  LESS,
 		"!=": BANG_EQUAL,
 	}
 	return operators[op]
@@ -103,7 +104,7 @@ func matchOperators(op string) TokenType {
 
 func matchKeywords(s string) TokenType {
 	keywords := map[string]TokenType{
-		"hai": HAI,
+		"hai":           HAI,
 		"chai_ban_gayi": CHAI_BAN_GAYI,
 		"chai_khatam":   CHAI_KHATAM,
 		"dekh":          DEKH,
@@ -129,85 +130,117 @@ func matchKeywords(s string) TokenType {
 }
 
 type Scanner struct {
-	source []byte
-	tokens []Token
-	start int
-	current int // index of source
-	line int
+	source   []byte
+	tokens   []Token
+	start    int
+	current  int
+	line     int
+	exitCode int
 }
 
 func NewScanner(source []byte) *Scanner {
 	return &Scanner{
 		source: source,
+		line:   1,
 	}
 }
 
 func (s *Scanner) Scan() error {
-	for !s.isAtEnd(){
+	for !s.isAtEnd() {
 		s.scanToken()
 	}
 	return nil
 }
 
-func (s *Scanner) isAtEnd() bool{
+func (s *Scanner) isAtEnd() bool {
 	return s.current >= len(s.source)
 }
 
 func (s *Scanner) advance() (rune, int) {
-	if (s.isAtEnd()){
+	if s.isAtEnd() {
 		return 0, 0
 	}
 	r, size := utf8.DecodeRune(s.source[s.current:])
-	s.current += size;
+	s.current += size
 	return r, size
 }
 
-func (s *Scanner) scanToken(){
+func (s *Scanner) scanToken() {
 	s.start = s.current
 	r, _ := s.advance()
-	switch r{
+	switch r {
+	case ' ', '\r', '\t':
+		return
 	case '\n':
 		s.line++
-	case '<','>','=','!':
+	case '<', '>', '=', '!':
 		s.operators(r)
+	case '{', '}', '(', ')', ',', ';', '.', '+', '-', '*':
+		s.addToken(singleCharacters(r), string(r), nil)
+	case '/':
+		if s.match('/') {
+			for s.peek() != '\n' && !s.isAtEnd() {
+				s.advance()
+			}
+		} else {
+			s.addToken(SLASH, "/", nil)
+		}
 	default:
-		return
+		s.error(s.line, fmt.Sprintf("Unexpected character: %c", r))
 	}
 }
 
-func (s *Scanner) operators(r rune){
+func (s Scanner) error(line int, message string) {
+	s.report(line, "", message)
+}
+
+func (s Scanner) report(line int, where, message string) {
+	fmt.Fprintf(os.Stderr, "[line %d] Error%s: %s\n", line, where, message)
+}
+
+func (s *Scanner) operators(r rune) {
 	op := string(r)
-	if s.match('='){
+	if s.match('=') {
 		op += "="
 	}
 
 	s.addToken(matchOperators(op), op, nil)
 }
 
-func (s *Scanner) match(r rune) bool{
+func (s *Scanner) match(r rune) bool {
 	if s.current >= len(s.source) {
 		return false
 	}
-	if rune(s.source[s.current]) != r{
-		return false;
+	if rune(s.source[s.current]) != r {
+		return false
 	}
-	s.current ++
+	s.current++
 	return true
 }
 
-func (s *Scanner) addToken(tokenType TokenType, lexeme string, literal any){
+func (s *Scanner) addToken(tokenType TokenType, lexeme string, literal any) {
 	s.tokens = append(s.tokens, Token{
 		tokenType: tokenType,
-		lexeme: lexeme,
-		literal: literal,
-		line: s.line,
+		lexeme:    lexeme,
+		literal:   literal,
+		line:      s.line,
 	})
 }
 
-func (s Scanner) GetTokens() []Token{
-	return s.tokens;
+func (s Scanner) GetTokens() []Token {
+	return s.tokens
 }
 
+func (s Scanner) peek() rune {
+	if s.isAtEnd() {
+		return 0
+	}
+	return rune(s.source[s.current])
+}
+
+func (s *Scanner) setExitCode(code int) {
+	s.exitCode = code
+}
 
 // Tokens
 type Token struct {
@@ -217,7 +250,7 @@ type Token struct {
 	line      int
 }
 
-
-func (t Token) String() string{
-	return fmt.Sprintf("%s", t.tokenType)
+func (t Token) String() string {
+	return fmt.Sprintf("%s at line %d", t.tokenType, t.line)
 }
+
