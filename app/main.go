@@ -9,7 +9,7 @@ import (
 func main() {
 	args := os.Args
 	if len(args) < 3 {
-		fmt.Println("Invalid usage\nRun ./run.sh tokenize filename.chai")
+		fmt.Println("Invalid usage\nUse tokenize command")
 		return
 	}
 	command := args[1]
