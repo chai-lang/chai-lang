@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 	"unicode/utf8"
 )
 
@@ -244,19 +245,42 @@ func (s *Scanner) operators(r rune) {
 }
 
 func (s *Scanner) string() {
-	str := ""
+	value := strings.Builder{}
 	for !s.isAtEnd() {
-		if s.peek() == '"' {
+		ch := s.peek()
+		if ch == '"' {
 			s.advance()
-			s.addToken(STRING, fmt.Sprintf("\"%s\"", str), str)
+			lexeme := string(s.source[s.start:s.current])
+			s.addToken(STRING, lexeme, value.String())
 			return
-		} else if s.peek() == '\n' {
+		}
+		if ch == '\\' {
+			s.advance()
+			if s.isAtEnd() {
+				s.error("Unterminated string.")
+				return
+			}
+			escaped, _ := s.advance()
+			switch escaped {
+			case '"':
+				value.WriteRune('"')
+			case '\\':
+				value.WriteRune('\\')
+			case 'n':
+				value.WriteRune('\n')
+			case 't':
+				value.WriteRune('\t')
+			default:
+				s.error(fmt.Sprintf("Unknown escape sequence: \\%c", escaped))
+			}
+			continue
+		}
+		if ch == '\n' {
 			s.error("Unterminated string.")
 			return
-		} else {
-			char, _ := s.advance()
-			str += string(char)
 		}
+		ch, _ = s.advance()
+		value.WriteRune(ch)
 	}
 	s.error("Unterminated string.")
 }
