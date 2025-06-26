@@ -7,3 +7,7 @@ func IsDigit(c rune) bool {
 func IsAlpha(c rune) bool {
 	return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || c == '_'
 }
+
+func IsAlphaNumeric(c rune) bool {
+	return IsAlpha(c) || IsDigit(c)
+}
