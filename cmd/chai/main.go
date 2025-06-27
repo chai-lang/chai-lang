@@ -1,6 +1,7 @@
 package main
 
 import (
+	"chai-lang/internal/ast"
 	"chai-lang/internal/scanner"
 	"fmt"
 	"os"
@@ -31,7 +32,19 @@ func main() {
 	for _, t := range scanner.GetTokens() {
 		fmt.Println(t)
 	}
-
+	// Ast printer
+	printer := ast.NewAstPrinter()
+	expr := ast.BinaryExpr{
+		Left: &ast.UnaryExpr{
+			Operator: ast.Token{TokenType: ast.MINUS, Lexeme: "-", Literal: nil, Line: 1},
+			Right:    &ast.Literal{Value: 123},
+		},
+		Operator: ast.Token{TokenType: ast.STAR, Lexeme: "*", Literal: nil, Line: 1},
+		Right: &ast.Grouping{
+			Expression: &ast.Literal{Value: 45.67},
+		},
+	}
+	fmt.Println(printer.Print(&expr))
 	exitCode := scanner.GetExitCode()
 	os.Exit(exitCode)
 }

@@ -1,6 +1,7 @@
 package scanner
 
 import (
+	"chai-lang/internal/ast"
 	"chai-lang/internal/utils"
 	"fmt"
 	"os"
@@ -9,110 +10,57 @@ import (
 	"unicode/utf8"
 )
 
-type TokenType string
-
-const (
-	// Single character
-	LEFT_PAREN  TokenType = "LEFT_PAREN"
-	RIGHT_PAREN TokenType = "RIGHT_PAREN"
-	LEFT_BRACE  TokenType = "LEFT_BRACE"
-	RIGHT_BRACE TokenType = "RIGHT_BRACE"
-	COMMA       TokenType = "COMMA"
-	SEMICOLON   TokenType = "SEMICOLON"
-	DOT         TokenType = "DOT"
-	PLUS        TokenType = "PLUS"
-	MINUS       TokenType = "MINUS"
-	STAR        TokenType = "STAR"
-	EOF         TokenType = "EOF"
-
-	// One or two
-	BANG_EQUAL    TokenType = "BANG_EQUAL"    // !=
-	EQUAL_EQUAL   TokenType = "EQUAL_EQUAL"   // ==
-	GREATER       TokenType = "GREATER"       // >
-	LESS          TokenType = "LESS"          // <
-	GREATER_EQUAL TokenType = "GREATER_EQUAL" // >=
-	LESS_EQUAL    TokenType = "LESS_EQUAL"    // <=
-	SLASH         TokenType = "SLASH"
-	IDENTIFIER    TokenType = "IDENTIFIER"
-
-	// Keywords
-	CHAIBANA   TokenType = "CHAIBANA"   // entrypoint
-	CHAIKHATAM TokenType = "CHAIKHATAM" // end
-	DEKH       TokenType = "DEKH"       // declare
-	HAI        TokenType = "HAI"        // assignment
-	BOL        TokenType = "BOL"        // print
-	SUN        TokenType = "SUN"        // input
-	AGAR       TokenType = "AGAR"       // if
-	NAHI_TO    TokenType = "NAHI_TOH"   // else if
-	WARNA      TokenType = "WARNA"      // else
-	JAB_TAK    TokenType = "JAB_TAK"    // while
-	TAB_TAK    TokenType = "TAB_TAK"    // while-then
-	HAR        TokenType = "HAR"        // for
-	ME         TokenType = "ME"         // in
-	KAAM       TokenType = "KAAM"       // function
-	KAR        TokenType = "KAR"        // call function
-	YE_LE      TokenType = "YE_LE"      // return
-	HAAN       TokenType = "HAAN"       // true
-	NAHI       TokenType = "NAHI"       // false
-	REHNE_DE   TokenType = "REHNE_DE"   // BREAK
-	KHALI      TokenType = "KHALI"      // nil
-
-	// Scanned Types
-	STRING TokenType = "STRING"
-	NUMBER TokenType = "NUMBER"
-)
-
-func singleCharacters(c rune) TokenType {
-	chars := map[rune]TokenType{
-		'{': LEFT_BRACE,
-		'}': RIGHT_BRACE,
-		'(': LEFT_PAREN,
-		')': RIGHT_PAREN,
-		',': COMMA,
-		';': SEMICOLON,
-		'.': DOT,
-		'+': PLUS,
-		'-': MINUS,
-		'*': STAR,
-		'/': SLASH,
+func singleCharacters(c rune) ast.TokenType {
+	chars := map[rune]ast.TokenType{
+		'{': ast.LEFT_BRACE,
+		'}': ast.RIGHT_BRACE,
+		'(': ast.LEFT_PAREN,
+		')': ast.RIGHT_PAREN,
+		',': ast.COMMA,
+		';': ast.SEMICOLON,
+		'.': ast.DOT,
+		'+': ast.PLUS,
+		'-': ast.MINUS,
+		'*': ast.STAR,
+		'/': ast.SLASH,
 	}
 	return chars[c]
 }
 
-func matchOperators(op string) TokenType {
-	operators := map[string]TokenType{
-		"==": EQUAL_EQUAL,
-		"<=": LESS_EQUAL,
-		">=": GREATER_EQUAL,
-		">":  GREATER,
-		"<":  LESS,
-		"!=": BANG_EQUAL,
+func matchOperators(op string) ast.TokenType {
+	operators := map[string]ast.TokenType{
+		"==": ast.EQUAL_EQUAL,
+		"<=": ast.LESS_EQUAL,
+		">=": ast.GREATER_EQUAL,
+		">":  ast.GREATER,
+		"<":  ast.LESS,
+		"!=": ast.BANG_EQUAL,
 	}
 	return operators[op]
 }
 
-func matchKeywords(s string) TokenType {
-	keywords := map[string]TokenType{
-		"hai":        HAI,
-		"chaibana":   CHAIBANA,
-		"chaikhatam": CHAIKHATAM,
-		"dekh":       DEKH,
-		"bol":        BOL,
-		"sun":        SUN,
-		"agar":       AGAR,
-		"nahito":     NAHI_TO,
-		"warna":      WARNA,
-		"jabtak":     JAB_TAK,
-		"tabtak":     TAB_TAK,
-		"har":        HAR,
-		"me":         ME,
-		"kaam":       KAAM,
-		"kar":        KAR,
-		"haan":       HAAN,
-		"nahi":       NAHI,
-		"khali":      KHALI,
-		"rehne_de":   REHNE_DE,
-		"yele":       YE_LE,
+func matchKeywords(s string) ast.TokenType {
+	keywords := map[string]ast.TokenType{
+		"hai":        ast.HAI,
+		"chaibana":   ast.CHAIBANA,
+		"chaikhatam": ast.CHAIKHATAM,
+		"dekh":       ast.DEKH,
+		"bol":        ast.BOL,
+		"sun":        ast.SUN,
+		"agar":       ast.AGAR,
+		"nahito":     ast.NAHI_TO,
+		"warna":      ast.WARNA,
+		"jabtak":     ast.JAB_TAK,
+		"tabtak":     ast.TAB_TAK,
+		"har":        ast.HAR,
+		"me":         ast.ME,
+		"kaam":       ast.KAAM,
+		"kar":        ast.KAR,
+		"haan":       ast.HAAN,
+		"nahi":       ast.NAHI,
+		"khali":      ast.KHALI,
+		"rehne_de":   ast.REHNE_DE,
+		"yele":       ast.YE_LE,
 	}
 
 	return keywords[s]
@@ -120,7 +68,7 @@ func matchKeywords(s string) TokenType {
 
 type Scanner struct {
 	source   []byte
-	tokens   []Token
+	tokens   []ast.Token
 	start    int
 	current  int
 	line     int
@@ -176,7 +124,7 @@ func (s *Scanner) scanToken() {
 				s.advance()
 			}
 		} else {
-			s.addToken(SLASH, "/", nil)
+			s.addToken(ast.SLASH, "/", nil)
 		}
 	case '"':
 		s.string()
@@ -203,7 +151,7 @@ func (s *Scanner) identifier() {
 	text := string(s.source[s.start:s.current])
 	t := matchKeywords(text)
 	if t == "" {
-		t = IDENTIFIER
+		t = ast.IDENTIFIER
 	}
 
 	s.addToken(t, text, nil)
@@ -224,7 +172,7 @@ func (s *Scanner) number() {
 	value := string(s.source[s.start:s.current])
 	fvalue, _ := strconv.ParseFloat(value, 64)
 
-	s.addToken(NUMBER, value, fvalue)
+	s.addToken(ast.NUMBER, value, fvalue)
 }
 
 func (s Scanner) error(message string) {
@@ -251,7 +199,7 @@ func (s *Scanner) string() {
 		if ch == '"' {
 			s.advance()
 			lexeme := string(s.source[s.start:s.current])
-			s.addToken(STRING, lexeme, value.String())
+			s.addToken(ast.STRING, lexeme, value.String())
 			return
 		}
 		if ch == '\\' {
@@ -296,16 +244,11 @@ func (s *Scanner) match(r rune) bool {
 	return true
 }
 
-func (s *Scanner) addToken(tokenType TokenType, lexeme string, literal any) {
-	s.tokens = append(s.tokens, Token{
-		tokenType: tokenType,
-		lexeme:    lexeme,
-		literal:   literal,
-		line:      s.line,
-	})
+func (s *Scanner) addToken(tokenType ast.TokenType, lexeme string, literal any) {
+	s.tokens = append(s.tokens, ast.NewToken(tokenType, lexeme, literal, s.line))
 }
 
-func (s Scanner) GetTokens() []Token {
+func (s Scanner) GetTokens() []ast.Token {
 	return s.tokens
 }
 
