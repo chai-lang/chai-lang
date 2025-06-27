@@ -49,6 +49,7 @@ const (
 	NAHI       TokenType = "NAHI"       // false
 	REHNE_DE   TokenType = "REHNE_DE"   // BREAK
 	KHALI      TokenType = "KHALI"      // nil
+	ULTA       TokenType = "ULTA"       // bang (!)
 
 	// Scanned Types
 	STRING TokenType = "STRING"
