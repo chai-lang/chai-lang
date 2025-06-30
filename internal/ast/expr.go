@@ -9,6 +9,8 @@ type ExprVisitor interface {
 	VisitGrouping(expr *Grouping) any
 	VisitLiteral(expr *Literal) any
 	VisitUnaryExpr(expr *UnaryExpr) any
+	VisitBolStmt(stmt *BolStmt) any
+	VisitExpressionStmt(stmt *ExpressionStmt) any
 }
 
 type BinaryExpr struct {
