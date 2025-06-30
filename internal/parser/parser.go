@@ -2,6 +2,7 @@ package parser
 
 import (
 	"chai-lang/internal/ast"
+	"chai-lang/internal/errors"
 	"fmt"
 	"slices"
 )
@@ -151,8 +152,8 @@ func (p *Parser) primary() ast.Expr {
 		p.consume(ast.RIGHT_PAREN, "Expected ')' after expression.")
 		return &ast.Grouping{Expression: expr}
 	}
-	// TODO: Handle more cases
-	panic("Unexpected token")
+	err := errors.NewParserError("Expected expression, found " + p.peek().Lexeme)
+	panic(err)
 }
 
 func (p *Parser) consume(tokenType ast.TokenType, message string) ast.Token {
@@ -160,16 +161,8 @@ func (p *Parser) consume(tokenType ast.TokenType, message string) ast.Token {
 		return p.advance()
 	}
 	p.error(p.peek(), message)
-	// TODO :Refactor this
-	return ast.Token{} // Should never reach here
-}
-
-type ParseError struct {
-	msg string
-}
-
-func (p ParseError) Error() string {
-	return p.msg
+	// Unreachble
+	return ast.Token{}
 }
 
 func (p *Parser) error(token ast.Token, message string) {
@@ -179,15 +172,52 @@ func (p *Parser) error(token ast.Token, message string) {
 	} else {
 		where = " at '" + token.Lexeme + "'"
 	}
-	err := ParseError{msg: fmt.Sprintf("[line %d] Error%s: %s\n", token.Line+1, where, message)}
+	err := errors.NewParserError(fmt.Sprintf("[line %d] Error%s: %s\n", token.Line+1, where, message))
 	panic(err)
 }
 
-func (p *Parser) Parse() ast.Expr {
-	// TODO: Recover from panic
-	expr := p.expression()
-	if !p.isAtEnd() {
-		p.error(p.peek(), "Unexpected token after expression.")
+func (p *Parser) parse() []ast.Stmt {
+	statements := make([]ast.Stmt, 0)
+	for !p.isAtEnd() {
+		statements = append(statements, p.statement())
 	}
-	return expr
+
+	return statements
+}
+
+func (p *Parser) statement() ast.Stmt {
+	if p.match(ast.BOL) {
+		return p.bolStatement()
+	}
+	return p.expressionStatement()
+}
+
+func (p *Parser) bolStatement() ast.Stmt {
+	expr := p.expression()
+	if !p.check(ast.SEMICOLON) {
+		p.error(p.peek(), "Expected ';' after expression.")
+	}
+	p.consume(ast.SEMICOLON, "Expected ';' after expression.")
+	return &ast.BolStmt{Expression: expr}
+}
+
+func (p *Parser) expressionStatement() ast.Stmt {
+	expr := p.expression()
+	if !p.check(ast.SEMICOLON) {
+		p.error(p.peek(), "Expected ';' after expression.")
+	}
+	p.consume(ast.SEMICOLON, "Expected ';' after expression.")
+	return &ast.ExpressionStmt{Expression: expr}
+}
+
+func (p *Parser) Parse() []ast.Stmt {
+	defer func() {
+		if r := recover(); r != nil {
+			if parserErr, ok := r.(errors.ParserError); ok {
+				errors.GlobalErrorState.HasParserError = true
+				errors.ReportError(p.peek().Line+1, "", parserErr.Error())
+			}
+		}
+	}()
+	return p.parse()
 }

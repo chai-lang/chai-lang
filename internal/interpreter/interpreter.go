@@ -1,6 +1,10 @@
 package interpreter
 
-import "chai-lang/internal/ast"
+import (
+	"chai-lang/internal/ast"
+	"chai-lang/internal/errors"
+	"fmt"
+)
 
 type Interpreter struct {
 }
@@ -47,7 +51,7 @@ func (i *Interpreter) VisitBinaryExpr(expr *ast.BinaryExpr) any {
 		if lNumOk && rNumOk {
 			return lNumber + rNumber
 		}
-		panic(NewRuntimeError(expr.Operator, "Operands must be two numbers or two strings for '+' operator"))
+		panic(errors.NewRuntimeError(expr.Operator, "Operands must be two numbers or two strings for '+' operator"))
 	case ast.MINUS:
 		i.checkNumberOperands(expr.Operator, left, right)
 		return left.(float64) - right.(float64)
@@ -83,6 +87,20 @@ func (i *Interpreter) evaluate(expr ast.Expr) any {
 	return expr.Accept(i)
 }
 
+func (i *Interpreter) VisitExpressionStmt(stmt *ast.ExpressionStmt) any {
+	i.evaluate(stmt.Expression)
+	return nil
+}
+
+func (i *Interpreter) VisitBolStmt(stmt *ast.BolStmt) any {
+	value := i.evaluate(stmt.Expression)
+	if value == nil {
+		value = "khali"
+	}
+	fmt.Println(value)
+	return nil
+}
+
 func (i *Interpreter) isTruthy(value any) bool {
 	if value == nil {
 		return false
@@ -109,40 +127,38 @@ func (i *Interpreter) isEqual(left, right any) bool {
 	return left == right
 }
 
-func (i *Interpreter) Interpret(tree ast.Expr) any {
-	return i.evaluate(tree)
+func (i *Interpreter) Interpret(statements []ast.Stmt) {
+	defer func() {
+		if r := recover(); r != nil {
+			if runtimeError, ok := r.(*errors.RuntimeError); ok {
+				errors.GlobalErrorState.HasRuntimeError = true
+				errors.ReportRuntimeError(runtimeError)
+			}
+		}
+	}()
+	for _, stmt := range statements {
+		i.execute(stmt)
+	}
+}
+
+func (i *Interpreter) execute(stmt ast.Stmt) {
+	stmt.Accept(i)
 }
 
 func (i *Interpreter) checkNumberOperand(operator ast.Token, operand any) {
 	if _, ok := operand.(float64); !ok {
-		panic(NewRuntimeError(operator, "Operand must be a number"))
+		panic(errors.NewRuntimeError(operator, "Operand must be a number"))
 	}
 }
 
 func (i *Interpreter) checkNumberOperands(operator ast.Token, left, right any) {
 	if _, ok := left.(float64); !ok {
-		panic(&RuntimeError{
-			Message: "Left operand must be a number",
-			Token:   operator,
-		})
+		panic(errors.NewRuntimeError(
+			operator,
+			"Left operand must be a number",
+		))
 	}
 	if _, ok := right.(float64); !ok {
-		panic(NewRuntimeError(operator, "Right operand must be a number"))
-	}
-}
-
-type RuntimeError struct {
-	Message string
-	Token   ast.Token
-}
-
-func (re *RuntimeError) Error() string {
-	return re.Message + " at " + re.Token.Lexeme
-}
-
-func NewRuntimeError(token ast.Token, message string) *RuntimeError {
-	return &RuntimeError{
-		Message: message,
-		Token:   token,
+		panic(errors.NewRuntimeError(operator, "Right operand must be a number"))
 	}
 }

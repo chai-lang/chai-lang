@@ -2,9 +2,9 @@ package scanner
 
 import (
 	"chai-lang/internal/ast"
+	"chai-lang/internal/errors"
 	"chai-lang/internal/utils"
 	"fmt"
-	"os"
 	"strconv"
 	"strings"
 	"unicode/utf8"
@@ -144,6 +144,7 @@ func (s *Scanner) scanToken() {
 
 	}
 }
+
 func (s *Scanner) identifier() {
 	for utils.IsAlphaNumeric(s.peek()) {
 		s.advance()
@@ -157,6 +158,7 @@ func (s *Scanner) identifier() {
 
 	s.addToken(t, text, nil)
 }
+
 func (s *Scanner) number() {
 	for utils.IsDigit(s.peek()) {
 		s.advance()
@@ -177,11 +179,7 @@ func (s *Scanner) number() {
 }
 
 func (s Scanner) error(message string) {
-	s.report(s.line, "", message)
-}
-
-func (s Scanner) report(line int, where, message string) {
-	fmt.Fprintf(os.Stderr, "[line %d] Error%s: %s\n", line, where, message)
+	errors.ReportError(s.line, "", message)
 }
 
 func (s *Scanner) operators(r rune) {
