@@ -2,6 +2,7 @@ package main
 
 import (
 	"chai-lang/internal/ast"
+	"chai-lang/internal/interpreter"
 	"chai-lang/internal/parser"
 	"chai-lang/internal/scanner"
 	"fmt"
@@ -33,12 +34,23 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Error scanning file: %v\n", err)
 		os.Exit(1)
 	}
+	for _, token := range scanner.GetTokens() {
+		fmt.Println(token)
+	}
 	// TODO: Handle errors
 	parser := parser.NewParser(scanner.GetTokens())
 	tree := parser.Parse()
-	if tree == nil {
+	if tree != nil {
+		fmt.Println("Parsed AST:")
 		printer := ast.NewAstPrinter()
-		printer.Print(tree)
+		out := printer.Print(tree)
+		fmt.Println(out)
+
+		fmt.Println("Interpreting the AST:")
+		interpreter := interpreter.NewInterpreter()
+		result := interpreter.Interpret(tree)
+		fmt.Println("Result:", result)
+
 	}
 	exitCode := scanner.GetExitCode()
 	os.Exit(exitCode)

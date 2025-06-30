@@ -19,6 +19,7 @@ func NewParser(tokens []ast.Token) *Parser {
 }
 
 func (p *Parser) expression() ast.Expr {
+	fmt.Println("Parsing expression")
 	return p.equality()
 }
 
@@ -53,7 +54,7 @@ func (p *Parser) check(tokenType ast.TokenType) bool {
 }
 
 func (p *Parser) isAtEnd() bool {
-	return p.peek().TokenType == ast.EOF
+	return p.current >= len(p.tokens) || p.tokens[p.current].TokenType == ast.EOF
 }
 
 func (p *Parser) advance() ast.Token {

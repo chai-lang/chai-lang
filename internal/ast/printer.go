@@ -16,6 +16,7 @@ func (p *AstPrinter) Print(expr Expr) string {
 }
 
 func (p *AstPrinter) VisitBinaryExpr(expr *BinaryExpr) any {
+	fmt.Println("Visiting binary expression")
 	return p.parenthesize(expr.Operator.Lexeme, expr.Left, expr.Right)
 }
 
