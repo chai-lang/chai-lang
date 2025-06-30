@@ -19,3 +19,12 @@ type ExpressionStmt struct {
 func (e *ExpressionStmt) Accept(visitor ExprVisitor) any {
 	return visitor.VisitExpressionStmt(e)
 }
+
+type DekhStmt struct { // variable declaration
+	Name        Token
+	Initializer Expr
+}
+
+func (d *DekhStmt) Accept(visitor ExprVisitor) any {
+	return visitor.VisitDekhStmt(d)
+}

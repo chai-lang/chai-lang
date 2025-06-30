@@ -11,6 +11,8 @@ type ExprVisitor interface {
 	VisitUnaryExpr(expr *UnaryExpr) any
 	VisitBolStmt(stmt *BolStmt) any
 	VisitExpressionStmt(stmt *ExpressionStmt) any
+	VisitDekhStmt(stmt *DekhStmt) any
+	VisitDekh(expr *Dekh) any
 }
 
 type BinaryExpr struct {
@@ -46,4 +48,12 @@ type UnaryExpr struct {
 
 func (u *UnaryExpr) Accept(visitor ExprVisitor) any {
 	return visitor.VisitUnaryExpr(u)
+}
+
+type Dekh struct {
+	Name Token
+}
+
+func (d *Dekh) Accept(visitor ExprVisitor) any {
+	return visitor.VisitDekh(d)
 }

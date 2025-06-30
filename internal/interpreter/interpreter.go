@@ -7,10 +7,13 @@ import (
 )
 
 type Interpreter struct {
+	globals map[string]any
 }
 
 func NewInterpreter() *Interpreter {
-	return &Interpreter{}
+	return &Interpreter{
+		globals: make(map[string]any),
+	}
 }
 
 func (i *Interpreter) VisitLiteral(expr *ast.Literal) any {
@@ -99,6 +102,23 @@ func (i *Interpreter) VisitBolStmt(stmt *ast.BolStmt) any {
 	}
 	fmt.Println(value)
 	return nil
+}
+
+func (i *Interpreter) VisitDekhStmt(stmt *ast.DekhStmt) any {
+	if stmt.Initializer == nil {
+		panic(errors.NewRuntimeError(stmt.Name, "Variable declaration must have an initializer"))
+	}
+	value := i.evaluate(stmt.Initializer)
+	i.globals[stmt.Name.Lexeme] = value
+	return nil
+}
+
+func (i *Interpreter) VisitDekh(expr *ast.Dekh) any {
+	value, exists := i.globals[expr.Name.Lexeme]
+	if !exists {
+		panic(errors.NewRuntimeError(expr.Name, fmt.Sprintf("Variable '%s' is not defined", expr.Name.Lexeme)))
+	}
+	return value
 }
 
 func (i *Interpreter) isTruthy(value any) bool {
