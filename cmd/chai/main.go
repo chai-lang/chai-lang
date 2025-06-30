@@ -34,6 +34,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Error scanning file: %v\n", err)
 		os.Exit(1)
 	}
+	fmt.Println("Scanned Tokens:")
 	for _, token := range scanner.GetTokens() {
 		fmt.Println(token)
 	}
