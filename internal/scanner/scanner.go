@@ -61,6 +61,7 @@ func matchKeywords(s string) ast.TokenType {
 		"khali":      ast.KHALI,
 		"rehne_de":   ast.REHNE_DE,
 		"yele":       ast.YE_LE,
+		"ulta":       ast.ULTA,
 	}
 
 	return keywords[s]
