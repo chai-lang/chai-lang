@@ -19,7 +19,6 @@ func NewParser(tokens []ast.Token) *Parser {
 }
 
 func (p *Parser) expression() ast.Expr {
-	fmt.Println("Parsing expression")
 	return p.equality()
 }
 
