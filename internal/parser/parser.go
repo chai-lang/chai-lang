@@ -134,6 +134,9 @@ func (p *Parser) unary() ast.Expr {
 }
 
 func (p *Parser) primary() ast.Expr {
+	if p.match(ast.IDENTIFIER) {
+		return &ast.Dekh{Name: p.previous()}
+	}
 	if p.match(ast.KHALI) {
 		return &ast.Literal{Value: nil}
 	}
@@ -179,10 +182,17 @@ func (p *Parser) error(token ast.Token, message string) {
 func (p *Parser) parse() []ast.Stmt {
 	statements := make([]ast.Stmt, 0)
 	for !p.isAtEnd() {
-		statements = append(statements, p.statement())
+		statements = append(statements, p.declaration())
 	}
 
 	return statements
+}
+
+func (p *Parser) declaration() ast.Stmt {
+	if p.match(ast.DEKH) {
+		return p.dekhStatement()
+	}
+	return p.statement()
 }
 
 func (p *Parser) statement() ast.Stmt {
@@ -190,6 +200,23 @@ func (p *Parser) statement() ast.Stmt {
 		return p.bolStatement()
 	}
 	return p.expressionStatement()
+}
+
+func (p *Parser) dekhStatement() ast.Stmt {
+	name := p.consume(ast.IDENTIFIER, "Expected variable name after 'dekh'.")
+	if !p.check(ast.HAI) {
+		p.error(p.peek(), "Expected 'hai' after variable name.")
+	}
+	p.consume(ast.HAI, "Expected 'hai' after variable name.")
+	initialization := p.expression()
+	if !p.check(ast.SEMICOLON) {
+		p.error(p.peek(), "Expected ';' after variable declaration.")
+	}
+	p.consume(ast.SEMICOLON, "Expected ';' after variable declaration.")
+	return &ast.DekhStmt{
+		Name:        name,
+		Initializer: initialization,
+	}
 }
 
 func (p *Parser) bolStatement() ast.Stmt {
