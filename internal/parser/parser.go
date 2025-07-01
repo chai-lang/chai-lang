@@ -249,7 +249,7 @@ func (p *Parser) agarStatement() ast.Stmt {
 }
 
 func (p *Parser) jabtakStatement() ast.Stmt {
-	p.consume(ast.LEFT_PAREN, "Expected '(' after 'jab_tak'.")
+	p.consume(ast.LEFT_PAREN, "Expected '(' after 'jabtak'.")
 	condition := p.expression()
 	p.consume(ast.RIGHT_PAREN, "Expected ')' after condition.")
 
@@ -263,7 +263,7 @@ func (p *Parser) jabtakStatement() ast.Stmt {
 }
 
 func (p *Parser) rehneDeStatement() ast.Stmt {
-	p.consume(ast.SEMICOLON, "Expected ';' after 'rehne_de'")
+	p.consume(ast.SEMICOLON, "Expected ';' after 'rehnede'")
 	return &ast.RehneDeStmt{}
 }
 
