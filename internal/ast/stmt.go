@@ -28,3 +28,11 @@ type DekhStmt struct { // variable declaration
 func (d *DekhStmt) Accept(visitor ExprVisitor) any {
 	return visitor.VisitDekhStmt(d)
 }
+
+type BlockStmt struct {
+	Statements []Stmt
+}
+
+func (b *BlockStmt) Accept(visitor ExprVisitor) any {
+	return visitor.VisitBlockStmt(b)
+}
