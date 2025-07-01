@@ -117,7 +117,6 @@ func (i *Interpreter) VisitDekhStmt(stmt *ast.DekhStmt) any {
 		panic(errors.NewRuntimeError(stmt.Name, "Variable declaration must have an initializer"))
 	}
 	value := i.evaluate(stmt.Initializer)
-	fmt.Printf("Dekh %s: %v\n", stmt.Name.Lexeme, value)
 	i.environment.Define(stmt.Name, value)
 	return nil
 }
