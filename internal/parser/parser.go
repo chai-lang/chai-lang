@@ -216,7 +216,21 @@ func (p *Parser) statement() ast.Stmt {
 	if p.match(ast.BOL) {
 		return p.bolStatement()
 	}
+	if p.match(ast.LEFT_BRACE) {
+		return p.blockStatement()
+	}
 	return p.expressionStatement()
+}
+
+func (p *Parser) blockStatement() ast.Stmt {
+	statements := make([]ast.Stmt, 0)
+	for !p.check(ast.RIGHT_BRACE) && !p.isAtEnd() {
+		statements = append(statements, p.declaration())
+	}
+	p.consume(ast.RIGHT_BRACE, "Expected '}' to close block statement.")
+	return &ast.BlockStmt{
+		Statements: statements,
+	}
 }
 
 func (p *Parser) dekhStatement() ast.Stmt {

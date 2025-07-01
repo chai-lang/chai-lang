@@ -117,6 +117,7 @@ func (i *Interpreter) VisitDekhStmt(stmt *ast.DekhStmt) any {
 		panic(errors.NewRuntimeError(stmt.Name, "Variable declaration must have an initializer"))
 	}
 	value := i.evaluate(stmt.Initializer)
+	fmt.Printf("Dekh %s: %v\n", stmt.Name.Lexeme, value)
 	i.environment.Define(stmt.Name, value)
 	return nil
 }
@@ -129,6 +130,19 @@ func (i *Interpreter) VisitAssignExpr(expr *ast.AssignExpr) any {
 	value := i.evaluate(expr.Value)
 	i.environment.Set(expr.Name, value)
 	return nil
+}
+
+func (i *Interpreter) VisitBlockStmt(stmt *ast.BlockStmt) any {
+	i.executeBlock(stmt.Statements, environment.NewEnclosedEnvironment(i.environment))
+	return nil
+}
+
+func (i *Interpreter) executeBlock(statements []ast.Stmt, env *environment.Environment) {
+	i.environment = env
+	for _, stmt := range statements {
+		i.execute(stmt)
+	}
+	i.environment = i.environment.Enclosing()
 }
 
 func (i *Interpreter) isTruthy(value any) bool {
