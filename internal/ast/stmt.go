@@ -55,3 +55,9 @@ type JabTakStmt struct {
 func (j *JabTakStmt) Accept(visitor ExprVisitor) any {
 	return visitor.VisitJabTakStmt(j)
 }
+
+type RehneDeStmt struct{}
+
+func (r *RehneDeStmt) Accept(visitor ExprVisitor) any {
+	return visitor.VisitRehneDeStmt(r)
+}

@@ -226,6 +226,10 @@ func (p *Parser) statement() ast.Stmt {
 	if p.match(ast.JAB_TAK) {
 		return p.jabtakStatement()
 	}
+	if p.match(ast.REHNE_DE) {
+		return p.rehneDeStatement()
+	}
+
 	return p.expressionStatement()
 }
 
@@ -256,6 +260,11 @@ func (p *Parser) jabtakStatement() ast.Stmt {
 		Condition: condition,
 		Body:      body,
 	}
+}
+
+func (p *Parser) rehneDeStatement() ast.Stmt {
+	p.consume(ast.SEMICOLON, "Expected ';' after 'rehne_de'")
+	return &ast.RehneDeStmt{}
 }
 
 func (p *Parser) blockStatement() ast.Stmt {
