@@ -1,24 +1,26 @@
 package main
 
 import (
+	"fmt"
+	"os"
+
 	"chai-lang/internal/errors"
 	"chai-lang/internal/interpreter"
 	"chai-lang/internal/parser"
 	"chai-lang/internal/scanner"
-	"fmt"
-	"os"
 )
 
 func main() {
 	args := os.Args
-	if len(args) < 3 {
-		fmt.Println("Invalid usage\nUse tokenize command")
-		return
-	}
-	command := args[1]
 
+	command := args[1]
 	if command != "tokenize" {
 		fmt.Println("Invalid usage\nRun ./run.sh tokenize filename.chai")
+		return
+	}
+
+	if len(args) < 3 {
+		fmt.Println("Invalid usage\nUse tokenize command")
 		return
 	}
 
