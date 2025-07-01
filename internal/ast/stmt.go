@@ -46,3 +46,12 @@ type AgarStmt struct {
 func (a *AgarStmt) Accept(visitor ExprVisitor) any {
 	return visitor.VisitAgarStmt(a)
 }
+
+type JabTakStmt struct {
+	Condition Expr
+	Body      Stmt
+}
+
+func (j *JabTakStmt) Accept(visitor ExprVisitor) any {
+	return visitor.VisitJabTakStmt(j)
+}

@@ -164,6 +164,13 @@ func (i *Interpreter) VisitAgarStmt(stmt *ast.AgarStmt) any {
 	return nil
 }
 
+func (i *Interpreter) VisitJabTakStmt(stmt *ast.JabTakStmt) any {
+	for i.isTruthy(i.evaluate(stmt.Condition)) {
+		i.execute(stmt.Body)
+	}
+	return nil
+}
+
 func (i *Interpreter) isEqual(left, right any) bool {
 	if left == nil && right == nil {
 		return true

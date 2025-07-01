@@ -1,10 +1,11 @@
 package parser
 
 import (
-	"chai-lang/internal/ast"
-	"chai-lang/internal/errors"
 	"fmt"
 	"slices"
+
+	"chai-lang/internal/ast"
+	"chai-lang/internal/errors"
 )
 
 type Parser struct {
@@ -222,6 +223,9 @@ func (p *Parser) statement() ast.Stmt {
 	if p.match(ast.LEFT_BRACE) {
 		return p.blockStatement()
 	}
+	if p.match(ast.JAB_TAK) {
+		return p.jabtakStatement()
+	}
 	return p.expressionStatement()
 }
 
@@ -237,6 +241,20 @@ func (p *Parser) agarStatement() ast.Stmt {
 		Condition:   condition,
 		AgarBranch:  agarBranch,
 		WarnaBranch: warnaBranch,
+	}
+}
+
+func (p *Parser) jabtakStatement() ast.Stmt {
+	p.consume(ast.LEFT_PAREN, "Expected '(' after 'jab_tak'.")
+	condition := p.expression()
+	p.consume(ast.RIGHT_PAREN, "Expected ')' after condition.")
+
+	p.consume(ast.TAB_TAK, "Expected 'tab_tak' after condition in 'jab_tak' statement.")
+	body := p.statement()
+
+	return &ast.JabTakStmt{
+		Condition: condition,
+		Body:      body,
 	}
 }
 
