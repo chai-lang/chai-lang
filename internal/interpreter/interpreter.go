@@ -165,18 +165,23 @@ func (i *Interpreter) VisitAgarStmt(stmt *ast.AgarStmt) any {
 }
 
 func (i *Interpreter) VisitJabTakStmt(stmt *ast.JabTakStmt) any {
+	breakLoop := false
 	for i.isTruthy(i.evaluate(stmt.Condition)) {
-		func() { // handle break from panic
+		func() {
 			defer func() {
 				if r := recover(); r != nil {
 					if _, ok := r.(errors.BreakSignal); ok {
-						panic("break-loop")
+						breakLoop = true
+						return
 					}
 					panic(r)
 				}
 			}()
 			i.execute(stmt.Body)
 		}()
+		if breakLoop {
+			break
+		}
 	}
 	return nil
 }
