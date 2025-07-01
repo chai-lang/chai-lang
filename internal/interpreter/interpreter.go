@@ -1,10 +1,11 @@
 package interpreter
 
 import (
+	"fmt"
+
 	"chai-lang/internal/ast"
 	"chai-lang/internal/environment"
 	"chai-lang/internal/errors"
-	"fmt"
 )
 
 type Interpreter struct {
@@ -100,6 +101,12 @@ func (i *Interpreter) VisitBolStmt(stmt *ast.BolStmt) any {
 	value := i.evaluate(stmt.Expression)
 	if value == nil {
 		value = "khali"
+	}
+	if value == true {
+		value = "haan"
+	}
+	if value == false {
+		value = "nahi"
 	}
 	fmt.Println(value)
 	return nil
