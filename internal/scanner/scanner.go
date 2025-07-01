@@ -60,7 +60,7 @@ func matchKeywords(s string) ast.TokenType {
 		"haan":       ast.HAAN,
 		"nahi":       ast.NAHI,
 		"khali":      ast.KHALI,
-		"rehne_de":   ast.REHNE_DE,
+		"rehnede":    ast.REHNE_DE,
 		"yele":       ast.YE_LE,
 		"ulta":       ast.ULTA,
 	}
