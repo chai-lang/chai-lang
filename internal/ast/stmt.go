@@ -36,3 +36,13 @@ type BlockStmt struct {
 func (b *BlockStmt) Accept(visitor ExprVisitor) any {
 	return visitor.VisitBlockStmt(b)
 }
+
+type AgarStmt struct {
+	Condition   Expr
+	AgarBranch  Stmt // if
+	WarnaBranch Stmt // else
+}
+
+func (a *AgarStmt) Accept(visitor ExprVisitor) any {
+	return visitor.VisitAgarStmt(a)
+}

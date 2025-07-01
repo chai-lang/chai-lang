@@ -15,6 +15,7 @@ type ExprVisitor interface {
 	VisitDekhExpr(expr *DekhExpr) any
 	VisitAssignExpr(expr *AssignExpr) any
 	VisitBlockStmt(stmt *BlockStmt) any
+	VisitAgarStmt(stmt *AgarStmt) any
 }
 
 type BinaryExpr struct {

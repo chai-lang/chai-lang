@@ -46,10 +46,10 @@ func (i *Interpreter) VisitBinaryExpr(expr *ast.BinaryExpr) any {
 
 	switch expr.Operator.TokenType {
 	case ast.PLUS:
-		lString, lOk := left.(string)
-		rString, rOk := right.(string)
-		if lOk && rOk {
-			return lString + rString
+		_, lOk := left.(string)
+		_, rOk := right.(string)
+		if lOk || rOk {
+			return fmt.Sprintf("%v%v", left, right)
 		}
 		lNumber, lNumOk := left.(float64)
 		rNumber, rNumOk := right.(float64)
@@ -152,6 +152,16 @@ func (i *Interpreter) isTruthy(value any) bool {
 		return boolean
 	}
 	return true
+}
+
+func (i *Interpreter) VisitAgarStmt(stmt *ast.AgarStmt) any {
+	condition := i.evaluate(stmt.Condition)
+	if i.isTruthy(condition) {
+		i.execute(stmt.AgarBranch)
+	} else if stmt.WarnaBranch != nil {
+		i.execute(stmt.WarnaBranch)
+	}
+	return nil
 }
 
 func (i *Interpreter) isEqual(left, right any) bool {
