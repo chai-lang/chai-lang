@@ -1,13 +1,14 @@
 package scanner
 
 import (
-	"chai-lang/internal/ast"
-	"chai-lang/internal/errors"
-	"chai-lang/internal/utils"
 	"fmt"
 	"strconv"
 	"strings"
 	"unicode/utf8"
+
+	"chai-lang/internal/ast"
+	"chai-lang/internal/errors"
+	"chai-lang/internal/utils"
 )
 
 func singleCharacters(c rune) ast.TokenType {
@@ -50,8 +51,8 @@ func matchKeywords(s string) ast.TokenType {
 		"agar":       ast.AGAR,
 		"nahito":     ast.NAHI_TO,
 		"warna":      ast.WARNA,
-		"jabtak":     ast.JAB_TAK,
-		"tabtak":     ast.TAB_TAK,
+		"jab_tak":    ast.JAB_TAK,
+		"tab_tak":    ast.TAB_TAK,
 		"har":        ast.HAR,
 		"me":         ast.ME,
 		"kaam":       ast.KAAM,
@@ -257,6 +258,7 @@ func (s Scanner) peek() rune {
 	}
 	return rune(s.source[s.current])
 }
+
 func (s Scanner) peekNext() rune {
 	if s.current+1 >= len(s.source) {
 		return 0
