@@ -213,6 +213,9 @@ func (p *Parser) declaration() ast.Stmt {
 }
 
 func (p *Parser) statement() ast.Stmt {
+	if p.match(ast.AGAR) {
+		return p.agarStatement()
+	}
 	if p.match(ast.BOL) {
 		return p.bolStatement()
 	}
@@ -220,6 +223,21 @@ func (p *Parser) statement() ast.Stmt {
 		return p.blockStatement()
 	}
 	return p.expressionStatement()
+}
+
+func (p *Parser) agarStatement() ast.Stmt {
+	condition := p.expression()
+	agarBranch := p.statement()
+	var warnaBranch ast.Stmt = nil
+	if p.match(ast.WARNA) {
+		warnaBranch = p.statement()
+	}
+
+	return &ast.AgarStmt{
+		Condition:   condition,
+		AgarBranch:  agarBranch,
+		WarnaBranch: warnaBranch,
+	}
 }
 
 func (p *Parser) blockStatement() ast.Stmt {

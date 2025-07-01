@@ -36,7 +36,7 @@ const (
 	BOL        TokenType = "BOL"        // print
 	SUN        TokenType = "SUN"        // input
 	AGAR       TokenType = "AGAR"       // if
-	NAHI_TO    TokenType = "NAHI_TOH"   // else if
+	NAHI_TO    TokenType = "NAHI_TO"    // else if
 	WARNA      TokenType = "WARNA"      // else
 	JAB_TAK    TokenType = "JAB_TAK"    // while
 	TAB_TAK    TokenType = "TAB_TAK"    // while-then
