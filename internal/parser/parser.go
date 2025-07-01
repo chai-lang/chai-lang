@@ -20,7 +20,24 @@ func NewParser(tokens []ast.Token) *Parser {
 }
 
 func (p *Parser) expression() ast.Expr {
-	return p.equality()
+	return p.assignment()
+}
+
+func (p *Parser) assignment() ast.Expr {
+	expr := p.equality()
+	if p.match(ast.HAI) {
+		hai := p.previous()
+		value := p.assignment()
+		if dekhExpr, ok := expr.(*ast.DekhExpr); ok {
+			return &ast.AssignExpr{
+				Name:  dekhExpr.Name,
+				Value: value,
+			}
+		}
+		p.error(hai, "Invalid assignment target. Expected variable name after 'hai'.")
+	}
+
+	return expr
 }
 
 func (p *Parser) equality() ast.Expr {
@@ -135,7 +152,7 @@ func (p *Parser) unary() ast.Expr {
 
 func (p *Parser) primary() ast.Expr {
 	if p.match(ast.IDENTIFIER) {
-		return &ast.Dekh{Name: p.previous()}
+		return &ast.DekhExpr{Name: p.previous()}
 	}
 	if p.match(ast.KHALI) {
 		return &ast.Literal{Value: nil}

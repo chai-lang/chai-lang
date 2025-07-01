@@ -2,17 +2,18 @@ package interpreter
 
 import (
 	"chai-lang/internal/ast"
+	"chai-lang/internal/environment"
 	"chai-lang/internal/errors"
 	"fmt"
 )
 
 type Interpreter struct {
-	globals map[string]any
+	environment *environment.Environment
 }
 
 func NewInterpreter() *Interpreter {
 	return &Interpreter{
-		globals: make(map[string]any),
+		environment: environment.NewEnvironment(),
 	}
 }
 
@@ -109,16 +110,18 @@ func (i *Interpreter) VisitDekhStmt(stmt *ast.DekhStmt) any {
 		panic(errors.NewRuntimeError(stmt.Name, "Variable declaration must have an initializer"))
 	}
 	value := i.evaluate(stmt.Initializer)
-	i.globals[stmt.Name.Lexeme] = value
+	i.environment.Define(stmt.Name, value)
 	return nil
 }
 
-func (i *Interpreter) VisitDekh(expr *ast.Dekh) any {
-	value, exists := i.globals[expr.Name.Lexeme]
-	if !exists {
-		panic(errors.NewRuntimeError(expr.Name, fmt.Sprintf("Variable '%s' is not defined", expr.Name.Lexeme)))
-	}
-	return value
+func (i *Interpreter) VisitDekhExpr(expr *ast.DekhExpr) any {
+	return i.environment.Get(expr.Name)
+}
+
+func (i *Interpreter) VisitAssignExpr(expr *ast.AssignExpr) any {
+	value := i.evaluate(expr.Value)
+	i.environment.Set(expr.Name, value)
+	return nil
 }
 
 func (i *Interpreter) isTruthy(value any) bool {
