@@ -13,18 +13,12 @@ import (
 func main() {
 	args := os.Args
 
-	command := args[1]
-	if command != "tokenize" {
-		fmt.Println("Invalid usage\nRun ./run.sh tokenize filename.chai")
-		return
-	}
-
-	if len(args) < 3 {
+	if len(args) < 2 {
 		fmt.Println("Invalid usage\nUse tokenize command")
 		return
 	}
 
-	filename := args[2]
+	filename := args[1]
 	rawContent, err := os.ReadFile(filename)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error reading file: %v\n", err)
@@ -36,10 +30,6 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Error scanning file: %v\n", err)
 		os.Exit(1)
 	}
-	// fmt.Println("Scanned Tokens:")
-	// for _, token := range scanner.GetTokens() {
-	// 	fmt.Println(token)
-	// }
 
 	parser := parser.NewParser(scanner.GetTokens())
 	tree := parser.Parse()
@@ -48,7 +38,6 @@ func main() {
 	}
 
 	if tree != nil {
-		fmt.Println("Interpreting the AST:")
 		interpreter := interpreter.NewInterpreter()
 		interpreter.Interpret(tree)
 	}

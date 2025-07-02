@@ -57,13 +57,13 @@ jabtak (i <= n) tabtak {
 **Windows:**
 
 ```bash
-./chai-lang.exe tokenize pyramid.chai
+./chai-lang.exe pyramid.chai
 ```
 
 **Linux / macOS:**
 
 ```bash
-./chai-lang tokenize pyramid.chai
+./chai-lang pyramid.chai
 ```
 
 ---
