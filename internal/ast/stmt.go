@@ -56,7 +56,9 @@ func (j *JabTakStmt) Accept(visitor ExprVisitor) any {
 	return visitor.VisitJabTakStmt(j)
 }
 
-type RehneDeStmt struct{}
+type RehneDeStmt struct {
+	Token Token
+}
 
 func (r *RehneDeStmt) Accept(visitor ExprVisitor) any {
 	return visitor.VisitRehneDeStmt(r)

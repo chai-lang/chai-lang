@@ -165,29 +165,28 @@ func (i *Interpreter) VisitAgarStmt(stmt *ast.AgarStmt) any {
 }
 
 func (i *Interpreter) VisitJabTakStmt(stmt *ast.JabTakStmt) any {
-	breakLoop := false
-	for i.isTruthy(i.evaluate(stmt.Condition)) {
-		func() {
-			defer func() {
-				if r := recover(); r != nil {
-					if _, ok := r.(errors.BreakSignal); ok {
-						breakLoop = true
-						return
-					}
-					panic(r)
+	var breakLoop bool
+	for i.isTruthy(i.evaluate(stmt.Condition)) && !breakLoop {
+		defer func() {
+			if r := recover(); r != nil {
+				if _, ok := r.(BreakSignal); ok {
+					breakLoop = true
+					return
+				} else if _, ok := r.(ContinueSignal); ok {
+					return
 				}
-			}()
-			i.execute(stmt.Body)
+				panic(r)
+			}
 		}()
-		if breakLoop {
-			break
-		}
+		i.execute(stmt.Body)
 	}
 	return nil
 }
 
 func (i *Interpreter) VisitRehneDeStmt(stmt *ast.RehneDeStmt) any {
-	panic(errors.BreakSignal{})
+	panic(BreakSignal{
+		Token: stmt.Token,
+	})
 }
 
 func (i *Interpreter) isEqual(left, right any) bool {
@@ -212,7 +211,15 @@ func (i *Interpreter) Interpret(statements []ast.Stmt) {
 			if runtimeError, ok := r.(*errors.RuntimeError); ok {
 				errors.GlobalErrorState.HasRuntimeError = true
 				errors.ReportRuntimeError(runtimeError)
+				return
 			}
+			if breakSignal, ok := r.(BreakSignal); ok {
+				errors.GlobalErrorState.HasRuntimeError = true
+				runtimeError := errors.NewRuntimeError(breakSignal.Token, "rehnede must be used inside a loop")
+				errors.ReportRuntimeError(runtimeError)
+				return
+			}
+			panic(r) // Re-raise unexpected errors
 		}
 	}()
 	for _, stmt := range statements {
