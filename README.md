@@ -6,32 +6,7 @@
 
 ## 🔧 Getting Started
 
-### Prerequisites
-
-- [Go](https://go.dev/doc/install) must be installed on your system.
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/chai-lang/chai-lang.git
-cd chai-lang
-```
-
-### 2. Build the CLI
-
-**Windows:**
-
-```bash
-go build -o chai-lang.exe ./cmd/chai/main.go
-```
-
-**Linux / macOS:**
-
-```bash
-go build -o chai-lang ./cmd/chai/main.go
-```
-
----
+Download the latest release from the [Releases](https://github.com/chai-lang/chai-lang/releases) page.
 
 ## 🧪 Try ChaiLang
 
