@@ -18,6 +18,7 @@ type ExprVisitor interface {
 	VisitAgarStmt(stmt *AgarStmt) any
 	VisitJabTakStmt(stmt *JabTakStmt) any
 	VisitRehneDeStmt(stmt *RehneDeStmt) any
+	VisitAglaStmt(stmt *AglaStmt) any
 }
 
 type BinaryExpr struct {
