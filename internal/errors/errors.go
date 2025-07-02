@@ -48,9 +48,3 @@ func NewParserError(msg string) ParserError {
 func (p ParserError) Error() string {
 	return p.msg
 }
-
-type BreakSignal struct{}
-
-func (b BreakSignal) Error() string {
-	return "Loop break signal"
-}

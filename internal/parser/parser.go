@@ -263,8 +263,11 @@ func (p *Parser) jabtakStatement() ast.Stmt {
 }
 
 func (p *Parser) rehneDeStatement() ast.Stmt {
+	rehneDeToken := p.previous()
 	p.consume(ast.SEMICOLON, "Expected ';' after 'rehnede'")
-	return &ast.RehneDeStmt{}
+	return &ast.RehneDeStmt{
+		Token: rehneDeToken,
+	}
 }
 
 func (p *Parser) blockStatement() ast.Stmt {
