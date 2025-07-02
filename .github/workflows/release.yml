@@ -25,9 +25,21 @@ jobs:
       - name: Build binary
         run: |
           mkdir -p dist
+          export LDFLAGS="-s -w"
+          export GOFLAGS="-ldflags=$LDFLAGS"
+          export CGO_ENABLED=0
+
+          # Linux
           GOOS=linux GOARCH=amd64 go build -o dist/chai-linux ./cmd/chai/main.go
+          upx --best dist/chai-linux
+
+          # Windows
           GOOS=windows GOARCH=amd64 go build -o dist/chai-windows.exe ./cmd/chai/main.go
+          upx --best dist/chai-windows.exe
+
+          # macOS
           GOOS=darwin GOARCH=amd64 go build -o dist/chai-macos ./cmd/chai/main.go
+          upx --best dist/chai-macos
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
