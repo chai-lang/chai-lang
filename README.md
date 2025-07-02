@@ -1,4 +1,4 @@
-# ☕ ChaiLang
+# ☕ ChaiLang (Work In Progress)
 
 **ChaiLang** is a fun little programming language made using Go. It’s written in a mix of Hindi + coding, so it feels more desi, more relatable — like coding with your friends over a cup of chai.
 
