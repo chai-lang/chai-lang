@@ -1,0 +1,20 @@
+dekh n hai 5;
+dekh i hai 1;
+
+jabtak (i <= n) tabtak {
+  dekh line hai "";
+  dekh space hai 1;
+  jabtak (space <= n - i) tabtak {
+    line hai line + " ";
+    space hai space + 1;
+  }
+
+  dekh j hai 1;
+  jabtak (j <= i) tabtak {
+    line hai line + "* ";
+    j hai j + 1;
+  }
+
+  bol line;
+  i hai i + 1;
+}
