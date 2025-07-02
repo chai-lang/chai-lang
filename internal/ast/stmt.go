@@ -63,3 +63,11 @@ type RehneDeStmt struct {
 func (r *RehneDeStmt) Accept(visitor ExprVisitor) any {
 	return visitor.VisitRehneDeStmt(r)
 }
+
+type AglaStmt struct {
+	Token Token
+}
+
+func (a *AglaStmt) Accept(visitor ExprVisitor) any {
+	return visitor.VisitAglaStmt(a)
+}

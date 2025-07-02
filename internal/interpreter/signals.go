@@ -10,7 +10,9 @@ func (b BreakSignal) Error() string {
 	return "Break signal received"
 }
 
-type ContinueSignal struct{}
+type ContinueSignal struct {
+	Token ast.Token
+}
 
 func (c ContinueSignal) Error() string {
 	return "Continue signal received"

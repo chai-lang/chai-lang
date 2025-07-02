@@ -229,6 +229,9 @@ func (p *Parser) statement() ast.Stmt {
 	if p.match(ast.REHNE_DE) {
 		return p.rehneDeStatement()
 	}
+	if p.match(ast.AGLA) {
+		return p.aglaStatement()
+	}
 
 	return p.expressionStatement()
 }
@@ -267,6 +270,14 @@ func (p *Parser) rehneDeStatement() ast.Stmt {
 	p.consume(ast.SEMICOLON, "Expected ';' after 'rehnede'")
 	return &ast.RehneDeStmt{
 		Token: rehneDeToken,
+	}
+}
+
+func (p *Parser) aglaStatement() ast.Stmt {
+	aglaToken := p.previous()
+	p.consume(ast.SEMICOLON, "Expected ';' after 'agla'")
+	return &ast.AglaStmt{
+		Token: aglaToken,
 	}
 }
 

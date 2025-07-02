@@ -165,26 +165,41 @@ func (i *Interpreter) VisitAgarStmt(stmt *ast.AgarStmt) any {
 }
 
 func (i *Interpreter) VisitJabTakStmt(stmt *ast.JabTakStmt) any {
-	var breakLoop bool
-	for i.isTruthy(i.evaluate(stmt.Condition)) && !breakLoop {
-		defer func() {
-			if r := recover(); r != nil {
-				if _, ok := r.(BreakSignal); ok {
-					breakLoop = true
-					return
-				} else if _, ok := r.(ContinueSignal); ok {
-					return
+	isBreak := false
+	for i.isTruthy(i.evaluate(stmt.Condition)) && !isBreak {
+		func() {
+			isContinue := false
+			defer func() {
+				if r := recover(); r != nil {
+					switch r := r.(type) {
+					case BreakSignal:
+						isBreak = true
+						return
+					case ContinueSignal:
+						isContinue = true
+						return
+					default:
+						panic(r)
+					}
 				}
-				panic(r)
+			}()
+			if isContinue {
+				return
 			}
+			i.execute(stmt.Body)
 		}()
-		i.execute(stmt.Body)
 	}
 	return nil
 }
 
 func (i *Interpreter) VisitRehneDeStmt(stmt *ast.RehneDeStmt) any {
 	panic(BreakSignal{
+		Token: stmt.Token,
+	})
+}
+
+func (i *Interpreter) VisitAglaStmt(stmt *ast.AglaStmt) any {
+	panic(ContinueSignal{
 		Token: stmt.Token,
 	})
 }
@@ -216,6 +231,12 @@ func (i *Interpreter) Interpret(statements []ast.Stmt) {
 			if breakSignal, ok := r.(BreakSignal); ok {
 				errors.GlobalErrorState.HasRuntimeError = true
 				runtimeError := errors.NewRuntimeError(breakSignal.Token, "rehnede must be used inside a loop")
+				errors.ReportRuntimeError(runtimeError)
+				return
+			}
+			if continueSignal, ok := r.(ContinueSignal); ok {
+				errors.GlobalErrorState.HasRuntimeError = true
+				runtimeError := errors.NewRuntimeError(continueSignal.Token, "agla must be used inside a loop")
 				errors.ReportRuntimeError(runtimeError)
 				return
 			}

@@ -50,6 +50,7 @@ const (
 	REHNE_DE   TokenType = "REHNE_DE"   // BREAK
 	KHALI      TokenType = "KHALI"      // nil
 	ULTA       TokenType = "ULTA"       // bang (!)
+	AGLA       TokenType = "AGLA"       // continue
 
 	// Scanned Types
 	STRING TokenType = "STRING"
