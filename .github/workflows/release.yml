@@ -39,7 +39,6 @@ jobs:
 
           # macOS
           GOOS=darwin GOARCH=amd64 go build -o dist/chai-macos ./cmd/chai/main.go
-          upx --best dist/chai-macos
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
