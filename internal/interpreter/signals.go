@@ -1,6 +1,6 @@
 package interpreter
 
-import "chai-lang/internal/ast"
+import "github.com/chai-lang/chai-lang/internal/ast"
 
 type BreakSignal struct {
 	Token ast.Token

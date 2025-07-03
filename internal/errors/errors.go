@@ -3,7 +3,7 @@ package errors
 import (
 	"fmt"
 
-	"chai-lang/internal/ast"
+	"github.com/chai-lang/chai-lang/internal/ast"
 )
 
 type ErrorState struct {
