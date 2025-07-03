@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WASM Go Example</title>
+  <script src="./wasm_exec.js"></script>
+  <script type="module">
+    const go = new Go();
+
+    const headers = new Headers();
+    headers.append("Content-Type", "application/wasm");
+
+    const wasm = await WebAssembly.instantiateStreaming(
+      fetch("main.wasm", {headers}),
+      go.importObject
+    );
+
+    await go.run(wasm.instance);
+
+    console.log("Calling run")
+    run(); // or globalThis.run()
+  </script>
+  <script>
+    window.addEventListener("message", (event) => {
+      if (event.data === "chai-lang:ready") {
+        const data = run();
+        console.log(data)
+      }
+    })
+  </script>
+</head>
+
+<body>
+</body>
+
+</html>
