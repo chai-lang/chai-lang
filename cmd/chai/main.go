@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"os"
 
-	"chai-lang/internal/errors"
-	"chai-lang/internal/interpreter"
-	"chai-lang/internal/parser"
-	"chai-lang/internal/scanner"
+	"github.com/chai-lang/chai-lang/internal/errors"
+	"github.com/chai-lang/chai-lang/internal/interpreter"
+	"github.com/chai-lang/chai-lang/internal/parser"
+	"github.com/chai-lang/chai-lang/internal/scanner"
 )
 
 func main() {

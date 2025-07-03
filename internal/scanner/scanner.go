@@ -6,9 +6,9 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"chai-lang/internal/ast"
-	"chai-lang/internal/errors"
-	"chai-lang/internal/utils"
+	"github.com/chai-lang/chai-lang/internal/ast"
+	"github.com/chai-lang/chai-lang/internal/errors"
+	"github.com/chai-lang/chai-lang/internal/utils"
 )
 
 func singleCharacters(c rune) ast.TokenType {

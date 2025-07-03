@@ -3,9 +3,9 @@ package interpreter
 import (
 	"fmt"
 
-	"chai-lang/internal/ast"
-	"chai-lang/internal/environment"
-	"chai-lang/internal/errors"
+	"github.com/chai-lang/chai-lang/internal/ast"
+	"github.com/chai-lang/chai-lang/internal/environment"
+	"github.com/chai-lang/chai-lang/internal/errors"
 )
 
 type Interpreter struct {

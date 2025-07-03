@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"slices"
 
-	"chai-lang/internal/ast"
-	"chai-lang/internal/errors"
+	"github.com/chai-lang/chai-lang/internal/ast"
+	"github.com/chai-lang/chai-lang/internal/errors"
 )
 
 type Parser struct {
