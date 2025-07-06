@@ -2,6 +2,7 @@ package interpreter
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/chai-lang/chai-lang/internal/ast"
 	"github.com/chai-lang/chai-lang/internal/environment"
@@ -12,9 +13,27 @@ type Interpreter struct {
 	environment *environment.Environment
 }
 
+// Inbuilt function
+type Time struct{}
+
+func (c *Time) Call(interpreter *Interpreter, args []any) any {
+	return float64(time.Now().UnixMilli())
+}
+func (c Time) Arity() int {
+	return 0
+}
+
+func (c Time) String() string {
+	return "<Clock>"
+}
+
+// end of inbuilt function
+
 func NewInterpreter() *Interpreter {
+	globals := environment.NewEnvironment()
+	globals.DefineNative("time", &Time{})
 	return &Interpreter{
-		environment: environment.NewEnvironment(),
+		environment: globals,
 	}
 }
 
@@ -202,6 +221,26 @@ func (i *Interpreter) VisitAglaStmt(stmt *ast.AglaStmt) any {
 	panic(ContinueSignal{
 		Token: stmt.Token,
 	})
+}
+
+func (i *Interpreter) VisitCallExpr(expr *ast.CallExpr) any {
+	callee := i.evaluate(expr.Callee)
+	arguments := make([]any, len(expr.Arguments))
+	for idx, arg := range expr.Arguments {
+		arguments[idx] = i.evaluate(arg)
+	}
+	function, isCallable := callee.(ChaiCallable)
+	if !isCallable {
+		panic(errors.NewRuntimeError(expr.Paren, fmt.Sprintf("Object '%v' is not callable", callee)))
+	}
+	if len(arguments) != function.Arity() {
+		panic(errors.NewRuntimeError(
+			expr.Paren,
+			fmt.Sprintf("Expected %d arguments but got %d", function.Arity(), len(arguments)),
+		))
+	}
+
+	return function.Call(i, arguments)
 }
 
 func (i *Interpreter) isEqual(left, right any) bool {

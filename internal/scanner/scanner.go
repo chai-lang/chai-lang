@@ -56,7 +56,6 @@ func matchKeywords(s string) ast.TokenType {
 		"har":        ast.HAR,
 		"me":         ast.ME,
 		"kaam":       ast.KAAM,
-		"kar":        ast.KAR,
 		"haan":       ast.HAAN,
 		"nahi":       ast.NAHI,
 		"khali":      ast.KHALI,

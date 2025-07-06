@@ -19,6 +19,7 @@ type ExprVisitor interface {
 	VisitJabTakStmt(stmt *JabTakStmt) any
 	VisitRehneDeStmt(stmt *RehneDeStmt) any
 	VisitAglaStmt(stmt *AglaStmt) any
+	VisitCallExpr(expr *CallExpr) any
 }
 
 type BinaryExpr struct {
@@ -71,4 +72,14 @@ type AssignExpr struct {
 
 func (a *AssignExpr) Accept(visitor ExprVisitor) any {
 	return visitor.VisitAssignExpr(a)
+}
+
+type CallExpr struct {
+	Callee    Expr
+	Paren     Token
+	Arguments []Expr
+}
+
+func (c *CallExpr) Accept(visitor ExprVisitor) any {
+	return visitor.VisitCallExpr(c)
 }
