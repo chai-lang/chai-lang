@@ -60,3 +60,10 @@ func (env *Environment) Enclosing() *Environment {
 	}
 	return env.enclosing
 }
+
+func (env *Environment) DefineNative(name string, value any) {
+	if _, exists := env.values[name]; exists {
+		panic(errors.NewRuntimeError(ast.Token{TokenType: ast.IDENTIFIER, Lexeme: name}, "Native function '"+name+"' is already defined."))
+	}
+	env.values[name] = value
+}
