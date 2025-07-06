@@ -288,7 +288,10 @@ func (p *Parser) jabtakStatement() ast.Stmt {
 	condition := p.expression()
 	p.consume(ast.RIGHT_PAREN, "Expected ')' after condition.")
 
-	p.consume(ast.TAB_TAK, "Expected 'tabtak' after condition in 'jabtak' statement.")
+	if p.check(ast.TAB_TAK) {
+		// Make tabtak optional
+		p.consume(ast.TAB_TAK, "Expected 'tabtak' after condition in 'jabtak' statement.")
+	}
 	body := p.statement()
 
 	return &ast.JabTakStmt{
