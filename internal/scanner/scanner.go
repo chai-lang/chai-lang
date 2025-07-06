@@ -24,6 +24,7 @@ func singleCharacters(c rune) ast.TokenType {
 		'-': ast.MINUS,
 		'*': ast.STAR,
 		'/': ast.SLASH,
+		'=': ast.EQUAL,
 	}
 	return chars[c]
 }
@@ -36,13 +37,14 @@ func matchOperators(op string) ast.TokenType {
 		">":  ast.GREATER,
 		"<":  ast.LESS,
 		"!=": ast.BANG_EQUAL,
+		"=":  ast.EQUAL,
 	}
 	return operators[op]
 }
 
 func matchKeywords(s string) ast.TokenType {
 	keywords := map[string]ast.TokenType{
-		"hai":        ast.HAI,
+		"hai":        ast.EQUAL,
 		"chaibana":   ast.CHAIBANA,
 		"chaikhatam": ast.CHAIKHATAM,
 		"dekh":       ast.DEKH,
@@ -116,10 +118,10 @@ func (s *Scanner) scanToken() {
 		return
 	case '\n':
 		s.line++
-	case '<', '>', '=', '!':
-		s.operators(r)
 	case '{', '}', '(', ')', ',', ';', '.', '+', '-', '*':
 		s.addToken(singleCharacters(r), string(r), nil)
+	case '<', '>', '=', '!':
+		s.operators(r)
 	case '/':
 		if s.match('/') {
 			for s.peek() != '\n' && !s.isAtEnd() {
