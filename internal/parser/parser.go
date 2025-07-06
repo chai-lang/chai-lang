@@ -26,7 +26,7 @@ func (p *Parser) expression() ast.Expr {
 
 func (p *Parser) assignment() ast.Expr {
 	expr := p.equality()
-	if p.match(ast.HAI) {
+	if p.match(ast.EQUAL) {
 		hai := p.previous()
 		value := p.assignment()
 		if dekhExpr, ok := expr.(*ast.DekhExpr); ok {
@@ -326,10 +326,10 @@ func (p *Parser) blockStatement() ast.Stmt {
 
 func (p *Parser) dekhStatement() ast.Stmt {
 	name := p.consume(ast.IDENTIFIER, "Expected variable name after 'dekh'.")
-	if !p.check(ast.HAI) {
-		p.error(p.peek(), "Expected 'hai' after variable name.")
+	if !p.check(ast.EQUAL) {
+		p.error(p.peek(), "Expected 'hai' or '=' after variable name.")
 	}
-	p.consume(ast.HAI, "Expected 'hai' after variable name.")
+	p.consume(ast.EQUAL, "Expected 'hai' or '=' after variable name.")
 	initialization := p.expression()
 	if !p.check(ast.SEMICOLON) {
 		p.error(p.peek(), "Expected ';' after variable declaration.")
