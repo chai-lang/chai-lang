@@ -1,0 +1,9 @@
+dekh ct hai time();
+dekh x hai 1000;
+dekh i hai 1;
+
+jabtak (x > i) tabtak {
+  bol i;
+  i hai i + 1;
+}
+bol "Time taken: " + (time() - ct) + " ms";

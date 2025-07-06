@@ -148,7 +148,39 @@ func (p *Parser) unary() ast.Expr {
 			Right:    right,
 		}
 	}
-	return p.primary()
+	return p.call()
+}
+
+func (p *Parser) call() ast.Expr {
+	expr := p.primary()
+
+	for {
+		if p.match(ast.LEFT_PAREN) {
+			expr = p.finishCall(expr)
+		} else {
+			break
+		}
+	}
+
+	return expr
+}
+func (p *Parser) finishCall(callee ast.Expr) ast.Expr {
+	arguments := make([]ast.Expr, 0)
+	for !p.check(ast.RIGHT_PAREN) && !p.isAtEnd() {
+		if len(arguments) >= 50 {
+			p.error(p.peek(), "Cannot have more than 50 arguments in a function call.")
+		}
+		arguments = append(arguments, p.expression())
+		if !p.match(ast.COMMA) {
+			break
+		}
+	}
+	p.consume(ast.RIGHT_PAREN, "Expected ')' after arguments.")
+	return &ast.CallExpr{
+		Callee:    callee,
+		Paren:     p.previous(),
+		Arguments: arguments,
+	}
 }
 
 func (p *Parser) primary() ast.Expr {

@@ -43,7 +43,6 @@ const (
 	HAR        TokenType = "HAR"        // for
 	ME         TokenType = "ME"         // in
 	KAAM       TokenType = "KAAM"       // function
-	KAR        TokenType = "KAR"        // call function
 	YE_LE      TokenType = "YE_LE"      // return
 	HAAN       TokenType = "HAAN"       // true
 	NAHI       TokenType = "NAHI"       // false

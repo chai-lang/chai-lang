@@ -71,3 +71,9 @@ type AglaStmt struct {
 func (a *AglaStmt) Accept(visitor ExprVisitor) any {
 	return visitor.VisitAglaStmt(a)
 }
+
+type KaamStmt struct {
+	Name       Token
+	Parameters []Token
+	Body       BlockStmt
+}
