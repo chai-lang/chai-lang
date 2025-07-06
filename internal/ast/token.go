@@ -32,7 +32,7 @@ const (
 	CHAIBANA   TokenType = "CHAIBANA"   // entrypoint
 	CHAIKHATAM TokenType = "CHAIKHATAM" // end
 	DEKH       TokenType = "DEKH"       // declare
-	HAI        TokenType = "HAI"        // assignment
+	EQUAL      TokenType = "EQUAL"      // assignment
 	BOL        TokenType = "BOL"        // print
 	SUN        TokenType = "SUN"        // input
 	AGAR       TokenType = "AGAR"       // if
