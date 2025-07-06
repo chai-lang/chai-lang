@@ -17,14 +17,16 @@ type Interpreter struct {
 type Time struct{}
 
 func (c *Time) Call(interpreter *Interpreter, args []any) any {
-	return float64(time.Now().UnixMilli())
+	currentTime := time.Now()
+	millisecondsFloat := float64(currentTime.UnixNano()) / float64(time.Millisecond)
+	return millisecondsFloat
 }
 func (c Time) Arity() int {
 	return 0
 }
 
 func (c Time) String() string {
-	return "<Clock>"
+	return "<kaam time>"
 }
 
 // end of inbuilt function
