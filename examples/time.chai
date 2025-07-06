@@ -2,7 +2,7 @@ dekh ct = time();
 dekh x = 1000;
 dekh i = 1;
 
-jabtak (x > i) tabtak {
+jabtak (x > i) {
   bol i;
   i = i + 1;
 }
