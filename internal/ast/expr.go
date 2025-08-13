@@ -20,6 +20,7 @@ type ExprVisitor interface {
 	VisitRehneDeStmt(stmt *RehneDeStmt) any
 	VisitAglaStmt(stmt *AglaStmt) any
 	VisitCallExpr(expr *CallExpr) any
+	VisitKaamStmt(stmt *KaamStmt) any
 }
 
 type BinaryExpr struct {

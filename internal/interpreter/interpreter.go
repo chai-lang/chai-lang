@@ -231,6 +231,7 @@ func (i *Interpreter) VisitCallExpr(expr *ast.CallExpr) any {
 	for idx, arg := range expr.Arguments {
 		arguments[idx] = i.evaluate(arg)
 	}
+
 	function, isCallable := callee.(ChaiCallable)
 	if !isCallable {
 		panic(errors.NewRuntimeError(expr.Paren, fmt.Sprintf("Object '%v' is not callable", callee)))
@@ -259,6 +260,12 @@ func (i *Interpreter) isEqual(left, right any) bool {
 		return false
 	}
 	return left == right
+}
+
+func (i *Interpreter) VisitKaamStmt(stmt *ast.KaamStmt) any {
+	kaam := NewKaam(stmt)
+	i.environment.Define(stmt.Name, kaam)
+	return nil
 }
 
 func (i *Interpreter) Interpret(statements []ast.Stmt) {
