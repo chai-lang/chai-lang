@@ -15,13 +15,24 @@ func NewKaam(declaration *ast.KaamStmt) *Kaam {
 	}
 }
 
-func (k *Kaam) Call(interpreter *Interpreter, args []any) any {
+func (k *Kaam) Call(interpreter *Interpreter, args []any) (returnValue any) {
 	env := environment.NewEnclosedEnvironment(interpreter.environment)
 	for i, param := range k.declaration.Parameters {
 		env.Define(param, args[i])
 	}
+
+	defer func() {
+		if r := recover(); r != nil {
+			if returnSignal, ok := r.(ReturnSignal); ok {
+				returnValue = returnSignal.Value
+				return
+			}
+			panic(r)
+		}
+	}()
+
 	interpreter.executeBlock(k.declaration.Body.Statements, env)
-	return nil
+	return
 }
 
 func (k *Kaam) Arity() int {

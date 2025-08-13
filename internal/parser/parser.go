@@ -246,6 +246,9 @@ func (p *Parser) declaration() ast.Stmt {
 }
 
 func (p *Parser) statement() ast.Stmt {
+	if p.match(ast.YE_LE) {
+		return p.yeleStatement()
+	}
 	if p.match(ast.KAAM) {
 		return p.kaamStatement()
 	}
@@ -398,5 +401,18 @@ func (p *Parser) kaamStatement() ast.Stmt {
 		Name:       name,
 		Parameters: parameters,
 		Body:       *blockStmt,
+	}
+}
+
+func (p *Parser) yeleStatement() ast.Stmt {
+	keyword := p.previous()
+	expr := p.expression()
+	if !p.check(ast.SEMICOLON) {
+		p.error(p.peek(), "Expected ';' after 'yele' expression.")
+	}
+	p.consume(ast.SEMICOLON, "Expected ';' after 'yele' expression.")
+	return &ast.YeLeStmt{
+		Keyword: keyword,
+		Value:   expr,
 	}
 }

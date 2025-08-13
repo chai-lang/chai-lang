@@ -268,6 +268,13 @@ func (i *Interpreter) VisitKaamStmt(stmt *ast.KaamStmt) any {
 	return nil
 }
 
+func (i *Interpreter) VisitYeLeStmt(stmt *ast.YeLeStmt) any {
+	value := i.evaluate(stmt.Value)
+	panic(ReturnSignal{
+		Value: value,
+	})
+}
+
 func (i *Interpreter) Interpret(statements []ast.Stmt) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -288,6 +295,16 @@ func (i *Interpreter) Interpret(statements []ast.Stmt) {
 				errors.ReportRuntimeError(runtimeError)
 				return
 			}
+			if returnSignal, ok := r.(ReturnSignal); ok {
+				errors.GlobalErrorState.HasRuntimeError = true
+				runtimeError := errors.NewRuntimeError(
+					returnSignal.Token,
+					"return must be used inside a function",
+				)
+				errors.ReportRuntimeError(runtimeError)
+				return
+			}
+
 			panic(r) // Re-raise unexpected errors
 		}
 	}()

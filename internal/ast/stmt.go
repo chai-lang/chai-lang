@@ -81,3 +81,12 @@ type KaamStmt struct {
 func (k *KaamStmt) Accept(visitor ExprVisitor) any {
 	return visitor.VisitKaamStmt(k)
 }
+
+type YeLeStmt struct {
+	Keyword Token
+	Value   Expr
+}
+
+func (y *YeLeStmt) Accept(visitor ExprVisitor) any {
+	return visitor.VisitYeLeStmt(y)
+}

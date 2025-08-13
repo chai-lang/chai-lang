@@ -17,3 +17,12 @@ type ContinueSignal struct {
 func (c ContinueSignal) Error() string {
 	return "Continue signal received"
 }
+
+type ReturnSignal struct {
+	Token ast.Token
+	Value any
+}
+
+func (r ReturnSignal) Error() string {
+	return "Return signal received"
+}
