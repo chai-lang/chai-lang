@@ -77,3 +77,7 @@ type KaamStmt struct {
 	Parameters []Token
 	Body       BlockStmt
 }
+
+func (k *KaamStmt) Accept(visitor ExprVisitor) any {
+	return visitor.VisitKaamStmt(k)
+}

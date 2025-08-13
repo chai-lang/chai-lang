@@ -246,6 +246,9 @@ func (p *Parser) declaration() ast.Stmt {
 }
 
 func (p *Parser) statement() ast.Stmt {
+	if p.match(ast.KAAM) {
+		return p.kaamStatement()
+	}
 	if p.match(ast.AGAR) {
 		return p.agarStatement()
 	}
@@ -372,4 +375,28 @@ func (p *Parser) Parse() []ast.Stmt {
 		}
 	}()
 	return p.parse()
+}
+
+func (p *Parser) kaamStatement() ast.Stmt {
+	name := p.consume(ast.IDENTIFIER, "Expected function name after 'kaam'.")
+	p.consume(ast.LEFT_PAREN, "Expected '(' after function name.")
+	parameters := make([]ast.Token, 0)
+	for !p.check(ast.RIGHT_PAREN) && !p.isAtEnd() {
+		if len(parameters) >= 255 {
+			p.error(p.peek(), "Cannot have more than 255 parameters in a function declaration.")
+		}
+		parameters = append(parameters, p.consume(ast.IDENTIFIER, "Expected parameter name."))
+		if !p.match(ast.COMMA) {
+			break
+		}
+	}
+	p.consume(ast.RIGHT_PAREN, "Expected ')' after parameters.")
+	p.consume(ast.LEFT_BRACE, "Expected '{' to start function body.")
+	body := p.blockStatement()
+	blockStmt, _ := body.(*ast.BlockStmt)
+	return &ast.KaamStmt{
+		Name:       name,
+		Parameters: parameters,
+		Body:       *blockStmt,
+	}
 }

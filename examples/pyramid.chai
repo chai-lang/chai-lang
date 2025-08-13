@@ -1,7 +1,7 @@
-dekh n hai 5;
+dekh n = 5;
 dekh i hai 1;
 
-jabtak (i <= n) tabtak {
+jabtak (i <= n)  {
   dekh line hai "";
   dekh space hai 1;
   jabtak (space <= n - i) tabtak {

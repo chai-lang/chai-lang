@@ -14,7 +14,7 @@ func main() {
 	args := os.Args
 
 	if len(args) < 2 {
-		fmt.Println("Invalid usage\nUse tokenize command")
+		fmt.Println("Invalid usage: chai <filename>")
 		return
 	}
 
