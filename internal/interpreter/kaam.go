@@ -27,3 +27,7 @@ func (k *Kaam) Call(interpreter *Interpreter, args []any) any {
 func (k *Kaam) Arity() int {
 	return len(k.declaration.Parameters)
 }
+
+func (k *Kaam) String() string {
+	return "<kaam " + k.declaration.Name.Lexeme + ">"
+}
